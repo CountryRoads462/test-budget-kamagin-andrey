@@ -1,5 +1,6 @@
 package mobi.sevenwinds.app.budget
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.papsign.ktor.openapigen.annotations.parameters.PathParam
 import com.papsign.ktor.openapigen.annotations.parameters.QueryParam
 import com.papsign.ktor.openapigen.annotations.type.number.integer.max.Max
@@ -29,19 +30,29 @@ data class BudgetRecord(
     @Min(1900) val year: Int,
     @Min(1) @Max(12) val month: Int,
     @Min(1) val amount: Int,
-    val type: BudgetType
-)
+    val type: BudgetType,
+    @JsonIgnore val authorId: Int?
+) {
+    constructor(year: Int, month: Int, amount: Int, type: BudgetType) : this(
+        year,
+        month,
+        amount,
+        type,
+        authorId = null
+    )
+}
 
 data class BudgetYearParam(
     @PathParam("Год") val year: Int,
     @QueryParam("Лимит пагинации") val limit: Int,
     @QueryParam("Смещение пагинации") val offset: Int,
+    @QueryParam(description = "Фильтр по ФИО", allowEmptyValues = true) val fullName: String
 )
 
 class BudgetYearStatsResponse(
     val total: Int,
     val totalByType: Map<String, Int>,
-    val items: List<BudgetRecord>
+    val items: List<Map<String, Any>>?
 )
 
 enum class BudgetType {

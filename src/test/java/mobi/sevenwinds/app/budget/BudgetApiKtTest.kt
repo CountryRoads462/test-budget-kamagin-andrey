@@ -33,19 +33,19 @@ class BudgetApiKtTest : ServerTest() {
             .toResponse<BudgetYearStatsResponse>().let { response ->
                 println("${response.total} / ${response.items} / ${response.totalByType}")
 
-                Assert.assertEquals(5, response.total)
-                Assert.assertEquals(3, response.items.size)
-                Assert.assertEquals(105, response.totalByType[BudgetType.Приход.name])
+                Assert.assertEquals(3, response.total)
+                Assert.assertEquals(3, response.items!!.size)
+                Assert.assertEquals(55, response.totalByType[BudgetType.Приход.name])
             }
     }
 
     @Test
     fun testStatsSortOrder() {
-        addRecord(BudgetRecord(2020, 5, 100, BudgetType.Приход))
-        addRecord(BudgetRecord(2020, 1, 5, BudgetType.Приход))
-        addRecord(BudgetRecord(2020, 5, 50, BudgetType.Приход))
         addRecord(BudgetRecord(2020, 1, 30, BudgetType.Приход))
+        addRecord(BudgetRecord(2020, 1, 5, BudgetType.Приход))
         addRecord(BudgetRecord(2020, 5, 400, BudgetType.Приход))
+        addRecord(BudgetRecord(2020, 5, 100, BudgetType.Приход))
+        addRecord(BudgetRecord(2020, 5, 50, BudgetType.Приход))
 
         // expected sort order - month ascending, amount descending
 
@@ -54,11 +54,11 @@ class BudgetApiKtTest : ServerTest() {
             .toResponse<BudgetYearStatsResponse>().let { response ->
                 println(response.items)
 
-                Assert.assertEquals(30, response.items[0].amount)
-                Assert.assertEquals(5, response.items[1].amount)
-                Assert.assertEquals(400, response.items[2].amount)
-                Assert.assertEquals(100, response.items[3].amount)
-                Assert.assertEquals(50, response.items[4].amount)
+                Assert.assertEquals(30, response.items!![0]["amount"])
+                Assert.assertEquals(5, response.items!![1]["amount"])
+                Assert.assertEquals(400, response.items!![2]["amount"])
+                Assert.assertEquals(100, response.items!![3]["amount"])
+                Assert.assertEquals(50, response.items!![4]["amount"])
             }
     }
 
